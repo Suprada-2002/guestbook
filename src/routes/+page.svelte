@@ -23,10 +23,8 @@
     });
 
     async function getEmoji() {
-        for (let i = 0; i < messages.length; i++) {
-            const res = await fetch("/lol");
-            emojis[i] = await res.text();
-        }
+            const res = await fetch("/lol?q=" + messages.length);
+            emojis = await res.json();
     }
 </script>
 
