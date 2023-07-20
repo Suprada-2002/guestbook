@@ -7,24 +7,27 @@
     let collRef = collection(db, "guestbook");
     let messages = [];
     let emojis = [];
-
+    let showMessages = false;
+    
     onMount(() => {
-        onSnapshot(collRef, (qsnapshot) => {
+        onSnapshot(collRef, async (qsnapshot) => {
             let fbGuestbook = [];
             qsnapshot.forEach((doc) => {
                 let book = {...doc.data(), id:doc.id}
                 fbGuestbook = [book, ...fbGuestbook];
             })
             //console.table(fbGuestbook);
+            
             messages = fbGuestbook;
-            getEmoji();
+            await getEmoji(fbGuestbook.length);
+            showMessages = true;
         })
        
     });
 
-    async function getEmoji() {
-            const res = await fetch("/lol?q=" + messages.length);
-            emojis = await res.json();
+    async function getEmoji(len) {
+        const res = await fetch("/lol?q=" + len);
+        emojis = await res.json();
     }
 </script>
 
@@ -34,6 +37,7 @@
 
 <CreatePage />
 <div class="wrapper">
+    {#if showMessages}
     <div class="messages">
         {#each messages as message, i}
             <div class="message">
@@ -42,6 +46,7 @@
             </div>
         {/each}
     </div>
+    {/if}
 </div>
 
 <style>
